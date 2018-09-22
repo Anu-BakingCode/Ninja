@@ -1,0 +1,103 @@
+﻿Set up LAMP Server
+
+
+Step1. Install Apache2
+
+
+        $ sudo apt-get update 
+        $ sudo apt-get install apache2
+
+
+
+
+  
+
+
+
+            Configure Apache2
+
+
+Set Global ServerName to Suppress Syntax Warnings
+
+
+        $ sudo apache2ctl  configtest
+        
+          
+
+
+        
+        $ sudo vim /etc/apache2/apache2.conf
+        
+             add ServerName = ip_address (mine is 192.168.1.9) at the end of the file.
+
+
+              Verify it by  running $ sudo apache2ctl  configtest
+
+
+  
+
+
+
+  
+
+
+
+Step2.Install MySQL
+
+
+        $ sudo apt-get install mysql-server
+
+
+  
+
+
+
+If it does not ask for password run the below command .
+
+
+$ sudo mysql_secure_authentication
+Step3. Install PHP using Source
+
+
+mkdir /usr/local/src/php5-build 
+cd   /usr/local/src/php5-build 
+wget -O php-5.3.29.tar.gz  http://de1.php.net/get/php-5.3.29.tar.gz/from/this/mirror
+tar -xvzf php-5.3.29.tar.gz
+sudo mkdir -p /usr/local/php( path for compilation)
+sudo cp /usr/local/src/php5-build/php-5.3.29/php.ini-production   /usr/local/php
+
+
+Configure PHP for compilation
+
+
+        $ ./configure --help
+It'll show a list of all options supported by the version of PHP that you are using.
+To compile PHP as Apache shared module we have to provide path to apache apxs utility, which in our case was installed in /wwwroot/bin/ when we installed Apache. So, in PHP source directory (/usr/local/php) execute this command :
+$ sudo ./configure --prefix=/usr/local/php --with-apxs2=/usr/bin/apxs --with-config-file-path=/usr/local/php --with-mysql=/usr/bin/mysql
+
+
+  
+
+Compile PHP
+          $ sudo make
+After make finishes and, no error etc. is displayed then PHP has been compiled successfully. If any warning is displayed then, normally, you can ignore it.
+Now, stop apache
+$ systemctl stop apache2
+
+
+Now you can execute make install from within PHP source directory to install PHP to /usr/local/php directory:
+$ make install
+It will install PHP5 module to Apache  module sub directories (/etc/apache2/mods-available/php5.load)add a line like this:
+         LoadModule php5_module modules/libphp5.so 
+AddType application/x-apache2-php .php
+AddType application/x-apache2-php .phtml
+
+
+<IfModule mod_php5.c>
+            <FilesMatch "\.ph(p?|tml)$">
+                SetHandler application/x-apache2-php
+            </FilesMatch>
+</IfModule>
+
+
+Restart  the apache2. But when testing in browser Apache is downloading php files instead of displaying them. Having Issue with this please suggest me.
