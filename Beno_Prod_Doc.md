@@ -163,22 +163,16 @@
 
 ###### 6. LOGIN CREDDENTIALS
  
-- AWS Console 
-
-  * URL      : https://console.aws.amazon.com/		
-  * Username : developer@beno.com		
-  * Password : @Just4beno
-
 - SSH Access for Frontend Server
 
 
-     **$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
+     **$ ssh -i   filename.pem  ubuntu@13.232.248.32**
 
 - SSH Access for Backend Server 
   
    Firstly SSH into Frontend Server then login into backend server as Backend is in Private Subnet 
  
-     **$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
+     **$ ssh -i   filename.pem  ubuntu@13.232.248.32**
 
-     **$ ssh -i   beno-prod.pem  ubuntu@10.0.21.52**
+     **$ ssh -i   filename.pem  ubuntu@10.0.21.52**
   
