@@ -1,12 +1,12 @@
-##BENO PRODUCTION SETUP 
+## BENO PRODUCTION SETUP 
 
-1. ABOUT 
+###### 1. ABOUT 
 
-2. PROD INFRASTRUCTURE OVERVIEW
+###### 2. PROD INFRASTRUCTURE OVERVIEW
 
 [IMAGE]
 
-3. SERVER DEPENDENCY
+###### 3. SERVER DEPENDENCY
 
   > Frontend Server Dependency
 
@@ -97,7 +97,7 @@
 ``` 
 
 
-4. DEPLOYMENT 
+###### 4. DEPLOYMENT 
 
     
   > Frontend Deployment
@@ -122,7 +122,7 @@
 
   > Backend Deployment
 
-5. AWS EC2 Instance 
+###### 5. AWS EC2 Instance 
 
 - Frontend 
 
@@ -168,7 +168,7 @@
 | Storage           | 20GB          |
 | Region            | Mumbai        |
 
-6. LOGIN CREDDENTIALS
+###### 6. LOGIN CREDDENTIALS
  
 - AWS Console 
 
