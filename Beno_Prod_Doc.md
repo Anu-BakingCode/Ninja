@@ -4,7 +4,7 @@
 
 ###### 2. PROD INFRASTRUCTURE OVERVIEW
 
-[IMAGE]
+![](../image/Screenshot from 2019-08-20 17-17-30.png)
 
 ###### 3. SERVER DEPENDENCY
 
@@ -103,7 +103,7 @@
   > Frontend Deployment
 
 	 
-[IMAGE] 
+![](../image/Screenshot from 2019-08-20 18-17-01.png) 
 
       - CodeCommit
 	
@@ -124,7 +124,7 @@
 
 ###### 5. AWS EC2 Instance 
 
-- Frontend 
+- Frontend Server
 
 | Name              |      Value    |  
 |-------------------|:-------------:|
@@ -136,7 +136,7 @@
 | Storage           |  30 GB        |
 
 
-- Backend
+- Backend Server
 
 | Name              |      Value    |  
 |-------------------|:-------------:|
@@ -148,7 +148,7 @@
 | Storage           |  30 GB        |
 
 
-- RDS 
+- RDS Database
 
 | Name              |      Value    |  
 |-------------------|:-------------:|
@@ -158,7 +158,7 @@
 | Storage           | 20GB          |
 | Region            | Mumbai        |
 
-- REDIS 
+- REDIS In-Memory
 
 | Name              |      Value    |  
 |-------------------|:-------------:|
@@ -179,13 +179,13 @@
 - SSH Access for Frontend Server
 
 
-**$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
+   **$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
 
 - SSH Access for Backend Server 
+  
+   Firstly SSH into Frontend Server then login into backend server as Backend is in Private Subnet 
  
-  Firstly SSH into Frontend Server then login into backend server as Backend is in Private Subnet 
- 
-**$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
+   **$ ssh -i   beno-prod.pem  ubuntu@13.232.248.32**
 
-**$ ssh -i   beno-prod.pem  ubuntu@10.0.21.52**
- 
+   **$ ssh -i   beno-prod.pem  ubuntu@10.0.21.52**
+  
