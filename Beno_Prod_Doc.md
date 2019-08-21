@@ -104,7 +104,7 @@
   > Frontend Deployment
 
 	 
-![](../image/Screenshot from 2019-08-20 18-17-01.png) 
+![](image/Frontend.png) 
 
       - CodeCommit
 	
@@ -122,6 +122,8 @@
 
 
   > Backend Deployment
+
+![](image/Backend.png)
 
 ###### 5. AWS EC2 Instance 
 
@@ -173,9 +175,9 @@
  
 - AWS Console 
 
-  URL      : https://console.aws.amazon.com/		
-  Username : developer@beno.com		
-  Password : @Just4beno
+  * URL      : https://console.aws.amazon.com/		
+  * Username : developer@beno.com		
+  * Password : @Just4beno
 
 - SSH Access for Frontend Server
 
