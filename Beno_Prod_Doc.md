@@ -6,10 +6,120 @@
 
 ![](image/Infrastructure.png)
 
+ **Description**
 
-###### 3. SERVER DEPENDENCY
+ * Application Load Balancer : The load balancer distributes incoming application traffic across multiple targets. Here two ALB has been used 
+   for both the server seperately. This increases the availability of your application.
 
-  > Frontend Server Dependency
+   ALB Frontend Endpoint - Prod-Frontend-ALB-2053540867.ap-south-1.elb.amazonaws.com
+   Listeners             
+   
+   80  ---> 443
+   443 ---> Prod-Frontend-target i.e Frontend-Server
+ 
+   ALB Backend Endpoint - Prod-Backend-ALB-344259781.ap-south-1.elb.amazonaws.com
+   Listeners             
+   
+   80  ---> 443
+   443 ---> Prod-Backend-target i.e Backend-Server
+                                
+ * Auto Scaling Group :
+
+   > ASG For Frontend
+
+   Launch Configuration Details :
+  
+   Instance Attached - prod-frontend-asg-alb-LaunchConfig-1REIKV7BLFOFGCopy (Frontend Server)
+   Desired Capacity  - 1
+   Min               - 1
+   Max               - 3
+   Availability Zone - ap-south-1b, ap-south-1a
+   LifeCycleHooks    -
+   
+   Scaling Policies
+
+ ```
+   Scale Out Policy 
+
+    If CPUUtilization > 70 for 300 seconds 
+    Add	1 instance	
+
+   Scale In Policy
+
+    If CPUUtilization < 40 for 300 seconds 
+    Remove 1 Instance
+ ```
+ 
+  > ASG For Backend
+
+  Launch Configuration Details :
+  
+  Instance Attached - prod-backend-asg-alb-LaunchConfig-1G3SSFR57KX1U-newCopy (Backend Server)
+  Desired Capacity  - 1
+  Min               - 1
+  Max               - 3
+  Availability Zone - ap-south-1a
+  Scaling Policies
+
+ ```
+  Scale Out Policy 
+
+   If CPUUtilization > 70 for 300 seconds 
+   Add	1 instance	
+
+  Scale In Policy
+
+   If CPUUtilization < 40 for 300 seconds 
+   Remove 1 Instance
+ ```
+
+  * NAT Gateway :
+  
+###### 3. SERVER PRE-REQUISITE
+
+  > Frontend Server Pre-Requisite
+
+  - NodeJS Installation & Version Check
+
+```
+   Step 1. Install Curl and add Install the nodejs LTS repos
+
+       $ sudo apt install curl
+       $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+             
+   Step 2. Install the nodejs and npm . The npm package comes with nodeJs
+
+       $ sudo apt install nodejs 
+		
+   Step 3. Version Check
+		
+       $ nodejs -v 
+       $ npm -v
+  
+```
+
+  - Nginx Installation 
+
+```
+       $ sudo apt install nginx
+```	
+  
+  - Git Installation 
+
+```
+       $ sudo apt install git
+```
+  - Postgresql Installation 
+
+```
+       $ sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
+       $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+       $ sudo apt-get update
+       $ sudo apt-get install postgresql-9.6
+
+``` 
+
+  > Backend Server Pre-Requisite
 
   - NodeJS Installation & Version Check
 
@@ -52,51 +162,6 @@
        $ sudo apt-get install postgresql-9.6
 
 ``` 
-
-  > Backend Server Dependency
-
-  - NodeJS Installation & Version Check
-
-```
-   Step 1. Install Curl and add Install the nodejs LTS repos
-
-       $ sudo apt install curl
-       $ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-             
-   Step 2. Install the nodejs and npm . The npm package comes with nodeJs
-
-       $ sudo apt install nodejs 
-		
-   Step 3. Version Check
-		
-       $ nodejs -v 
-       $ npm -v
-  
-```
-
-  - Nginx Installation 
-
-```
-       $ sudo apt install nginx
-
-```	
-  
-  - Git Installation 
-
-```
-       $ sudo apt install git
-
-```
-  - Postgresql Installation 
-
-```
-       $ sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
-       $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-       $ sudo apt-get update
-       $ sudo apt-get install postgresql-9.6
-
-``` 
-
 
 ###### 4. DEPLOYMENT 
 
@@ -108,7 +173,47 @@
 
    **Flow Of Deployment**
     
+   * Once your pull-request has been merged CodePipeline will run the merged result and trigger the CodeBuild.
+   * CodeBuild will run the buildsepc.yml file which has been congfigured to run the build commands for nodejs application and will copy the 
+     build to S3 bucket.
+   
+    ```
+	version: 0.2
+
+	phases:
+	  install:
+	    runtime-versions:
+	      nodejs: 8
+	  pre_build:
+	    commands:
+	       - npm install      
+	  build:
+	    commands:
+	      - npm run build
+	  post_build:
+	    commands:
+	       - cd dist
+	       - aws s3 sync ./ s3://prod-deploy-frontend/deployable/ --delete --acl public-read --cache-control max-age=0
+	```    
     
+   * Once the codebuild is successful, the stage added to pipeline for manual approval via SNS will get executed . When it gets approved  
+     for deployment then the CodeDeploy will run.
+
+   * In the CodeDeploy , appspec.yml file is configured which will copy the build folder from s3 to Frontend Server
+
+     ```	
+        version: 0.0 
+	os: linux 
+	# files: 
+	#     - source: / 
+	#       destination: /home/ubuntu/myfrontend     
+	 
+	hooks: 
+	 
+	  AfterInstall: 
+	    - location: scripts/prod_after.sh 
+	      runas: root  
+    ```
 
 
   > Backend Deployment
@@ -176,3 +281,6 @@
 
      **$ ssh -i   filename.pem  ubuntu@10.0.21.52**
   
+###### 7. BACKUP POLICY
+
+
