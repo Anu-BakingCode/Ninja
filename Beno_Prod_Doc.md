@@ -4,7 +4,7 @@
 
 ###### 2. PROD INFRASTRUCTURE OVERVIEW
 
-![](../image/Screenshot from 2019-08-20 17-17-30.png)
+![](../image/Infrastructure.png)
 
 ###### 3. SERVER DEPENDENCY
 
