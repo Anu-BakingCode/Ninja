@@ -4,7 +4,7 @@
 
 ###### 2. PROD INFRASTRUCTURE OVERVIEW
 
-![](../image/Infrastructure.png)
+![](..image/Infrastructure.png)
 
 ###### 3. SERVER DEPENDENCY
 
