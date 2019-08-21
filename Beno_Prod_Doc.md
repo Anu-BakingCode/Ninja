@@ -104,26 +104,16 @@
   > Frontend Deployment
 
 	 
-![](image/Frontend.png) 
+![](image/Frontend1.png) 
 
-      - CodeCommit
-	
-	1. Create the Repository in CodeCommit . 
-	2. 
-	
-
-      - CodeBuild 
- 
-	1. Create the Build Project 
- 	2. Add Source Provider and Repository
-
-
+   **Flow Of Deployment**
+    
     
 
 
   > Backend Deployment
 
-![](image/Backend.png)
+![](image/Backend1.png)
 
 ###### 5. AWS EC2 Instance 
 
