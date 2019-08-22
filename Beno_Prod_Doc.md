@@ -27,53 +27,54 @@
 
    > ASG For Frontend
 
-   Launch Configuration Details :
-  
-   Instance Attached - prod-frontend-asg-alb-LaunchConfig-1REIKV7BLFOFGCopy (Frontend Server)
-   Desired Capacity  - 1
-   Min               - 1
-   Max               - 3
-   Availability Zone - ap-south-1b, ap-south-1a
-   LifeCycleHooks    -
-   
-   Scaling Policies
+	   Launch Configuration Details :
+	  
+	   Instance Attached - prod-frontend-asg-alb-LaunchConfig-1REIKV7BLFOFGCopy (Frontend Server)
+	   Desired Capacity  - 1
+	   Min               - 1
+	   Max               - 3
+	   Availability Zone - ap-south-1b, ap-south-1a
+	  
+	   
+	   Scaling Policies
 
- ```
-   Scale Out Policy 
+	 ```
+	   Scale Out Policy 
 
-    If CPUUtilization > 70 for 300 seconds 
-    Add	1 instance	
+	    If CPUUtilization > 70 for 300 seconds 
+	    Add	1 instance	
 
-   Scale In Policy
+	   Scale In Policy
 
-    If CPUUtilization < 40 for 300 seconds 
-    Remove 1 Instance
- ```
- 
-  > ASG For Backend
+	    If CPUUtilization < 40 for 300 seconds 
+	    Remove 1 Instance
+	 ```
+	 
+   > ASG For Backend
 
-  Launch Configuration Details :
-  
-  Instance Attached - prod-backend-asg-alb-LaunchConfig-1G3SSFR57KX1U-newCopy (Backend Server)
-  Desired Capacity  - 1
-  Min               - 1
-  Max               - 3
-  Availability Zone - ap-south-1a
-  Scaling Policies
+	  Launch Configuration Details :
+	  
+	  Instance Attached - prod-backend-asg-alb-LaunchConfig-1G3SSFR57KX1U-newCopy (Backend Server)
+	  Desired Capacity  - 1
+	  Min               - 1
+	  Max               - 3
+	  Availability Zone - ap-south-1a
+	  Scaling Policies
 
- ```
-  Scale Out Policy 
+	 ```
+	  Scale Out Policy 
 
-   If CPUUtilization > 70 for 300 seconds 
-   Add	1 instance	
+	   If CPUUtilization > 70 for 300 seconds 
+	   Add	1 instance	
 
-  Scale In Policy
+	  Scale In Policy
 
-   If CPUUtilization < 40 for 300 seconds 
-   Remove 1 Instance
- ```
+	   If CPUUtilization < 40 for 300 seconds 
+	   Remove 1 Instance
+	 ```
 
-  * NAT Gateway :
+  * NAT Gateway : Network address translation (NAT) gateway to enable instances in a private subnet to connect to the internet or other AWS 			  services, but prevent the internet from initiating a connection with those instances. So The Backend Server will connect with 
+                  Internet via NAT Gateway.
   
 ###### 3. SERVER PRE-REQUISITE
 
@@ -144,23 +145,20 @@
 
 ```
        $ sudo apt install nginx
-
 ```	
   
   - Git Installation 
 
 ```
        $ sudo apt install git
-
 ```
   - Postgresql Installation 
 
 ```
-       $ sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
+       $ sudo apt-get install wget ca-certificates
        $ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
        $ sudo apt-get update
-       $ sudo apt-get install postgresql-9.6
-
+       $ sudo apt-get install postgresql-10
 ``` 
 
 ###### 4. DEPLOYMENT 
@@ -201,24 +199,52 @@
 
    * In the CodeDeploy , appspec.yml file is configured which will copy the build folder from s3 to Frontend Server
 
-     ```	
-        version: 0.0 
+	```	
+	version: 0.0 
 	os: linux 
-	# files: 
-	#     - source: / 
-	#       destination: /home/ubuntu/myfrontend     
-	 
+	files: 
+	    - source: / 
+	      destination: /home/ubuntu/mybackendadmin 
 	hooks: 
+	  BeforeInstall: 
+	    #- location: scripts/common_functions.sh 
+	    - location: scripts/prod_before.sh 
+	      runas: root 
 	 
 	  AfterInstall: 
 	    - location: scripts/prod_after.sh 
-	      runas: root  
-    ```
+	      runas: root 
+	```
 
 
   > Backend Deployment
 
 ![](image/Backend1.png)
+
+   * Once your pull-request has been merged CodePipeline will run the merged result .
+   * The stage added to pipeline for manual approval via SNS will get executed . When it gets approved  
+     for deployment then the CodeDeploy will run.
+   * In the CodeDeploy , appspec.yml file is configured with two scripts file `prod_before.sh` and `prod_after.sh` . prod_before.sh execute and 
+     verify whether the app is running or not. If it is running it stops the running application. Then prod_after.sh get executed which 
+     install the npm modules and runs the application and copy all the logs to s3 . (s3://prod-deploy-backend/deploy-logs)
+
+	```
+	version: 0.0 
+	os: linux 
+	files: 
+	    - source: / 
+	      destination: /home/ubuntu/mybackendadmin 
+	hooks: 
+	  BeforeInstall: 
+	    - location: scripts/prod_before.sh 
+	      runas: root 
+	 
+	  AfterInstall: 
+	    - location: scripts/prod_after.sh 
+	      runas: root 
+	```
+
+
 
 ###### 5. AWS EC2 Instance 
 
