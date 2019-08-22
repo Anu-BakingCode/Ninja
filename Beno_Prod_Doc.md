@@ -175,7 +175,7 @@
    * CodeBuild will run the buildsepc.yml file which has been congfigured to run the build commands for nodejs application and will copy the 
      build to S3 bucket.
    
-    ```
+    
 	version: 0.2
 
 	phases:
@@ -192,14 +192,14 @@
 	    commands:
 	       - cd dist
 	       - aws s3 sync ./ s3://prod-deploy-frontend/deployable/ --delete --acl public-read --cache-control max-age=0
-	```    
+	   
     
    * Once the codebuild is successful, the stage added to pipeline for manual approval via SNS will get executed . When it gets approved  
      for deployment then the CodeDeploy will run.
 
    * In the CodeDeploy , appspec.yml file is configured which will copy the build folder from s3 to Frontend Server
 
-	```	
+		
 	version: 0.0 
 	os: linux 
 	files: 
@@ -214,12 +214,14 @@
 	  AfterInstall: 
 	    - location: scripts/prod_after.sh 
 	      runas: root 
-	```
+	
 
 
   > Backend Deployment
 
 ![](image/Backend1.png)
+
+   **Flow Of Deployment**
 
    * Once your pull-request has been merged CodePipeline will run the merged result .
    * The stage added to pipeline for manual approval via SNS will get executed . When it gets approved  
@@ -228,7 +230,7 @@
      verify whether the app is running or not. If it is running it stops the running application. Then prod_after.sh get executed which 
      install the npm modules and runs the application and copy all the logs to s3 . (s3://prod-deploy-backend/deploy-logs)
 
-	```
+	
 	version: 0.0 
 	os: linux 
 	files: 
@@ -242,7 +244,7 @@
 	  AfterInstall: 
 	    - location: scripts/prod_after.sh 
 	      runas: root 
-	```
+	
 
 
 
@@ -307,6 +309,6 @@
 
      **$ ssh -i   filename.pem  ubuntu@10.0.21.52**
   
-###### 7. BACKUP POLICY
+
 
 
